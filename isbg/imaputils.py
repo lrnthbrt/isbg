@@ -42,7 +42,7 @@ from .utils import __
 
 from typing import List, TypeVar, Union
 
-Email = TypeVar(email.message.Message)
+Email = email.message.Message
 Uid = Union[int, str]
 Uids = List[int]
 
@@ -286,7 +286,7 @@ class IsbgImap4(object):
         return uidvalidity
 
 
-def login_imap(imapsets, logger=None, assertok=None):
+def login_imap(imapsets, logger=None, assertok=None) -> IsbgImap4:
     """Login to the imap server."""
     if not isinstance(imapsets, ImapSettings):
         raise TypeError("imapsets is not a ImapSettings")
