@@ -72,7 +72,8 @@ def learn_mail(mail, learn_type):
     """
     out = ""
     orig_code = None
-    proc = utils.popen(["spamc", "--learntype=" + learn_type])
+    size = len(mail.as_bytes())
+    proc = utils.popen(["spamc", "--learntype=" + learn_type, "--max-size="+str(size+1)])
     try:
         out = proc.communicate(imaputils.mail_content(mail))
         code = int(proc.returncode)
@@ -306,11 +307,11 @@ class SpamAssassin(object):
 
         self.imap.select(folder)
         if self.learnunflagged:
-            _, uids = self.imap.uid("SEARCH", None, "UNFLAGGED")
+            _, uids = self.imap.uid("SEARCH", None, "UNFLAGGED", "SMALLER", str(self.maxsize))
         elif self.learnflagged:
-            _, uids = self.imap.uid("SEARCH", None, "(FLAGGED)")
+            _, uids = self.imap.uid("SEARCH", None, "(FLAGGED)", "SMALLER", str(self.maxsize))
         else:
-            _, uids = self.imap.uid("SEARCH", None, "ALL")
+            _, uids = self.imap.uid("SEARCH", None, "SMALLER", str(self.maxsize))
 
         uids, sa_learning.newpastuids = SpamAssassin.get_formated_uids(
             uids, origpastuids, self.partialrun)
