@@ -519,6 +519,8 @@ class ISBG(object):
             origpastuids = self.pastuid_read(uidvalidity)
             proc = sa.process_inbox(origpastuids)
             self.pastuid_write(uidvalidity, proc.newpastuids, proc.uids)
+        else:
+            proc = None
 
         if self.nostats is False:
             if self.imapsets.learnspambox is not None:
@@ -529,7 +531,7 @@ class ISBG(object):
                 self.logger.info(__(
                     "{}/{} hams learned".format(h_learned.learned,
                                                 h_learned.tolearn)))
-            if not self.teachonly:
+            if proc is not None:
                 self.logger.info(__(
                     "{} spams found in {} messages".format(proc.numspam,
                                                            proc.nummsg)))
@@ -602,7 +604,7 @@ class ISBG(object):
         self.do_imap_logout()
 
         if self.exitcodes and __name__ == '__main__':
-            if not self.teachonly:
+            if proc is not None:
                 if proc.numspam == 0:
                     return __exitcodes__['newmsgs']
                 if proc.numspam == proc.nummsg:
