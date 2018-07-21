@@ -99,8 +99,8 @@ Key              Val cmd? [1]_ Description
 ``'spamc'``       12    no     Error with spamc/spamassassin call.
 ``'tty'``         20    no     The program was not launched in an interactive
                                terminal.
-``'locked'``      30    no     Error with the *lock* file, is another instance
-                               of ``isbg`` must be running.
+``'locked'``      30    no     Error with the *lock* file, another instance of
+                               ``isbg`` must be running.
 ``'error'``       -1    no     Other errors.
 ================ === ========= ===============================================
 
@@ -476,10 +476,9 @@ class ISBG(object):
     def do_list_imap(self):
         """List the imap boxes."""
         imap_list = self.imap.list()
-        dirlist = str([x.decode() for x in imap_list[1]])
-        # string formatting
-        dirlist = re.sub(r'\(.*?\)| \".\" \"|\"\', \'', " ", dirlist)
-        self.logger.info(dirlist)
+        # display each folder on a single line to avoid confusion
+        for x in imap_list[1]:
+            self.logger.info(re.sub(r'\s*(\(.*?\)|\".\")\s*', "", x))
 
     def do_spamassassin(self):
         """Do the spamassassin procesing.
